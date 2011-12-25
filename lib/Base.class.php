@@ -13,15 +13,17 @@ abstract class Base {
 	/// the constructor
 	///
 	public function __construct($mongoId=null) {
-		if ($mongoId==null) { // new unsaved object
+		if ($mongoId===null) { // new unsaved object
 			$this->data=array();
 			$this->original=null;
 		} elseif (is_array($mongoId)) {
 			$this->data=$mongoId;
 		} else {
-			// wrap _id as a MongoId obj.
-			if('MongoId'!==get_class($mongoId)) $mongoId=new MongoId($mongoId);
+			// wrap _id as a MongoId obj if scalar
+			if(is_scalar($mongoId)) $mongoId=new MongoId($mongoId);
 			$row=Db::$songs->findOne(array('_id'=>$mongoId));
+			if ($row) $this->data=$row;
+			else throw new Exception("could not find ".get_class()." with id: ".$mongoId);
 		}
 	}
 
