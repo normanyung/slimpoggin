@@ -11,7 +11,7 @@ abstract class Base {
 	protected $original;
 
 	/// the constructor
-	///
+	/// @throws Exception when $mongoId is not found in DB.
 	public function __construct($mongoId=null) {
 		if ($mongoId===null) { // new unsaved object
 			$this->data=array();
@@ -31,6 +31,7 @@ abstract class Base {
 		}
 	}
 
+	/// implement magic function __call that will handle all getFieldName methods().
 	public function __call($string, $params) {
 		if (0===strpos($string, 'get')) {
 			$field=substr($string, 3);
@@ -38,7 +39,7 @@ abstract class Base {
 			if (isset($this->data[$underscore_separated])) return $this->data[$underscore_separated];
 			return null;
 		} else {
-			error_log("__call(): ".$string);
+			throw new Exception("Invalid method called for ".get_called_class().": ".$string."()");
 		}
 	}
 	/// @return true or array of error code/messages.

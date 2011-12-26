@@ -2,6 +2,7 @@
 require_once 'Base.class.php';
 
 class Song extends Base {
+	
 	public function validate($data=null) {
 		$errors=array(); // error collector array
 
