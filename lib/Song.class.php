@@ -21,6 +21,17 @@ class Song extends Base {
 		return true;
 	}
 	
+	/// returns just the lyrics.
+	public function getLyrics() {
+		$text=$this->getText();
+		$lines=explode("\n", $text);
+		$lyrics='';
+		foreach($lines as $l) {
+			if (!$this->isChordLine($l)) $lyrics.=$l."\n";
+		}
+		return $lyrics;
+	}
+	
 	/// @return string. mongo collection name.
 	protected function getCollectionName() {
 		return 'songs';

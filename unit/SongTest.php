@@ -23,7 +23,6 @@ class SongTest extends PHPUnit_Framework_TestCase {
 			array('And trembles at his voice, trembles at his voice.', false),
 			array('', false),
 			array('', false),
-			/*
 			array('    C                          G', true),
 			array('How great is our God, sing with me,', false),
 			array('    Am7                        G', true),
@@ -46,7 +45,6 @@ class SongTest extends PHPUnit_Framework_TestCase {
 			array('My heart will sing', false),
 			array('    G            C Csus C', true),
 			array('How great is our God.', false),
-			*/
 		);
 	}
 }

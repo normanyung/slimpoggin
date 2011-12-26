@@ -22,11 +22,25 @@ abstract class Base {
 			// wrap _id as a MongoId obj if scalar
 			if(is_scalar($mongoId)) $mongoId=new MongoId($mongoId);
 			$row=Db::$songs->findOne(array('_id'=>$mongoId));
-			if ($row) $this->data=$row;
-			else throw new Exception("could not find ".get_class()." with id: ".$mongoId);
+			if ($row) {
+				$this->data=$row;
+				$this->original=$row;
+			} else {
+				throw new Exception("could not find ".get_class()." with id: ".$mongoId);
+			}
 		}
 	}
 
+	public function __call($string, $params) {
+		if (0===strpos($string, 'get')) {
+			$field=substr($string, 3);
+			$underscore_separated=strtolower(trim(preg_replace('/([A-Z])/', '_$1', $field), " _"));
+			if (isset($this->data[$underscore_separated])) return $this->data[$underscore_separated];
+			return null;
+		} else {
+			error_log("__call(): ".$string);
+		}
+	}
 	/// @return true or array of error code/messages.
 	abstract public function validate($data=null);
 
@@ -43,6 +57,18 @@ abstract class Base {
 
 		Db::${$collectionName}->save($this->data);
 		return true;
+	}
+	
+	/// factory style init
+	public static function loadById($mongoId) {
+		try {
+			$classname=get_called_class();
+			$obj=new $classname($mongoid);
+			return $obj;
+		} catch (Exception $e) {
+			error_log($e);
+			return null;
+		}
 	}
 }
 ?>
