@@ -18,7 +18,7 @@ class Song extends Base {
 		if (4096<strlen($data['text']))  $errors[]=PogginError::getMessage('SONG_LENGTH_TEXT');
 		
 		// invalid year input (not very extensive checking).
-		if (!empty($data['year']) && !is_int($data['year'])) $errors[]=PogginError::getMessage('SONG_REQUIRED_TITLE');
+		if (!empty($data['year']) && !is_numeric($data['year'])) $errors[]=PogginError::getMessage('SONG_INVALID_YEAR');
 		
 		if (empty($errors)) return true;
 		return $errors;

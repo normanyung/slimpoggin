@@ -74,7 +74,7 @@ abstract class Base {
 	/// @param $data contains data to override $this->data. only keys that are also defined 
 	///        in getDefaults() are used; others are ignored.
 	/// @return true or array of errrors.
-	public function update($data) {
+	public function update($data, $commit=false) {
 		$errors=array();
 		if (isset($data['_id']) && $this->getId()!==$data['_id']) {
 			$errors[]=PogginError::getMessage('ID_MISMATCH');
@@ -90,8 +90,13 @@ abstract class Base {
 		// if there are errors, return
 		if (!empty($errors)) return $errors;
 		
-		// since this was initially set with getDefaults(), every field should be defined.
-		$this->data=array_merge($this->data, $newdata);
+		// add MongoId
+		$newdata=array('_id'=>new MongoId($this->getId())) + $newdata;
+		
+		// set new $data
+		$this->data=$newdata;
+		
+		if ($commit) $this->commit();
 		
 		return true;
 	}

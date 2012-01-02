@@ -9,6 +9,7 @@ class PogginError {
 		array(1004, 'SONG_LENGTH_TITLE',                     'Song title cannot be longer than 64 characters.'),
 		array(1005, 'SONG_LENGTH_AUTHOR',                    'Song title cannot be longer than 64 characters.'),
 		array(1006, 'SONG_LENGTH_TEXT',                      'Song text is too long.'),
+		array(1007, 'SONG_INVALID_YEAR',                     'Song year is invalid.'),
 		
 		// Shared errors: 9000
 		array(9001, 'ID_MISMATCH',                           '\'_id\' mismatch in opeation.'),
