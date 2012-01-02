@@ -14,7 +14,9 @@ abstract class Base {
 	/// @throws Exception when $mongoId is not found in DB.
 	public function __construct($mongoId=null) {
 		if ($mongoId===null) { // new unsaved object
-			$this->data=array();
+			$this->data=array(
+				'_id'=>new MongoId(),
+			) + $this->getDefaults();
 			$this->original=null;
 		} elseif (is_array($mongoId)) {
 			$this->data=$mongoId;

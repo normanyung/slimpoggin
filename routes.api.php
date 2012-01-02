@@ -7,15 +7,14 @@ $app->get('/api/song/:mongoid', function($mongoid) use ($app) {
 	print pogginSuccess($song->toApiObj());
 });
 
-// create new song
-$app->post('/api/song', function() use ($app) {
-	
-});
-
-// update song by passing new $data in json.
-$app->post('/api/song/:mongoid', function($mongoid) use ($app) {
-	$song=Song::loadById($mongoid);
-	if (!$song) pogginError('SONG_NOT_FOUND', 404);
+// create/update song by passing new $data in json.
+$app->post('/api/song(/:mongoid)', function($mongoid=null) use ($app) {
+	if (null===$mongoid) {
+		$song=new Song();
+	} else { // update existing
+		$song=Song::loadById($mongoid);
+		if (!$song) pogginError('SONG_NOT_FOUND', 404);
+	} 
 	$input=file_get_contents('php://input');
 	$data=json_decode($input, true);
 	$update=$song->update($data, true);
