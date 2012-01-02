@@ -59,10 +59,13 @@ abstract class Base {
 	abstract protected function getDefaults();
 
 	/// save to the db if it passses validation.
-	public function commit() {
-		$validate=$this->validate();
-		if (true!==$validate) { // if errors returned in validate() spit em out.
-			return $validate;
+	/// @param $validate boolean whether or not to validate before commit
+	public function commit($validate=true) {
+		if ($validate) {
+			$validate=$this->validate();
+			if (true!==$validate) { // if errors returned in validate() spit em out.
+				return $validate;
+			}
 		}
 		$collectionName=$this->getCollectionName();
 
@@ -96,7 +99,7 @@ abstract class Base {
 		// set new $data
 		$this->data=$newdata;
 		
-		if ($commit) $this->commit();
+		if ($commit) $this->commit(false); // false, to not double validate().
 		
 		return true;
 	}

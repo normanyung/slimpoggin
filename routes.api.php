@@ -1,12 +1,18 @@
 <?php
 
+// get song json by id
 $app->get('/api/song/:mongoid', function($mongoid) use ($app) {
 	$song=Song::loadById($mongoid);
 	if (!$song) pogginError('SONG_NOT_FOUND', 404);
 	print pogginSuccess($song->toApiObj());
 });
 
-// update song by passing new $data in json. 
+// create new song
+$app->post('/api/song', function() use ($app) {
+	
+});
+
+// update song by passing new $data in json.
 $app->post('/api/song/:mongoid', function($mongoid) use ($app) {
 	$song=Song::loadById($mongoid);
 	if (!$song) pogginError('SONG_NOT_FOUND', 404);
@@ -20,5 +26,6 @@ $app->post('/api/song/:mongoid', function($mongoid) use ($app) {
 		pogginError($update, 501);
 	}
 });
+
 
 ?>
