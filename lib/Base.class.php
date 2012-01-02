@@ -30,7 +30,7 @@ abstract class Base {
 			}
 		}
 	}
-
+	
 	/// implement magic function __call that will handle all getFieldName methods().
 	public function __call($string, $params) {
 		if (0===strpos($string, 'get')) {
@@ -42,11 +42,21 @@ abstract class Base {
 			throw new Exception("Invalid method called for ".get_called_class().": ".$string."()");
 		}
 	}
+
+	/// return '_id' as a string.
+	public function getId() {
+		return $this->data['_id']."";
+	}
+	
 	/// @return true or array of error code/messages.
 	abstract public function validate($data=null);
 
 	/// get the collection name for this object.
 	abstract protected function getCollectionName();
+
+	/// get the default values for this object's $data.
+	/// the default may not pass validate() but should define every expected field for this object.
+	abstract protected function getDefaults();
 
 	/// save to the db if it passses validation.
 	public function commit() {
@@ -60,11 +70,37 @@ abstract class Base {
 		return true;
 	}
 	
-	/// factory style init
+	/// update this object given $data assoc array.
+	/// @param $data contains data to override $this->data. only keys that are also defined 
+	///        in getDefaults() are used; others are ignored.
+	/// @return true or array of errrors.
+	public function update($data) {
+		$errors=array();
+		if (isset($data['_id']) && $this->getId()!==$data['_id']) {
+			$errors[]=PogginError::getMessage('ID_MISMATCH');
+		}
+		$newdata=$this->getDefaults();
+		foreach ($newdata as $key=>$value) {
+			if (isset($data[$key])) $newdata[$key]=$data[$key];
+		}
+		
+		$validate=$this->validate($newdata);
+		if ($validate!==true) $errors=array_merge($errors, $validate);
+		
+		// if there are errors, return
+		if (!empty($errors)) return $errors;
+		
+		// since this was initially set with getDefaults(), every field should be defined.
+		$this->data=array_merge($this->data, $newdata);
+		
+		return true;
+	}
+	
+	/// factory style init.
 	public static function loadById($mongoId) {
 		try {
 			$classname=get_called_class();
-			$obj=new $classname($mongoid);
+			$obj=new $classname($mongoId);
 			return $obj;
 		} catch (Exception $e) {
 			error_log($e);

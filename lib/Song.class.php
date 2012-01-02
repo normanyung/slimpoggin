@@ -2,13 +2,26 @@
 require_once 'Base.class.php';
 
 class Song extends Base {
-	
 	public function validate($data=null) {
 		$errors=array(); // error collector array
-
-		// if $data is not passed, default to this object's data.
-		if ($data==null) $data=$this->data;
-		return true;
+		
+		// if $data is not passed, use this instance's data.
+		if ($data===null) $data=$this->data;
+		
+		// required
+		if (''==trim($data['title'])) $errors[]=PogginError::getMessage('SONG_REQUIRED_TITLE');
+		if (''==trim($data['text']))  $errors[]=PogginError::getMessage('SONG_REQUIRED_TEXT');
+		
+		// length
+		if (64<strlen($data['title']))   $errors[]=PogginError::getMessage('SONG_LENGTH_TITLE');
+		if (64<strlen($data['author']))  $errors[]=PogginError::getMessage('SONG_LENGTH_AUTHOR');
+		if (4096<strlen($data['text']))  $errors[]=PogginError::getMessage('SONG_LENGTH_TEXT');
+		
+		// invalid year input (not very extensive checking).
+		if (!empty($data['year']) && !is_int($data['year'])) $errors[]=PogginError::getMessage('SONG_REQUIRED_TITLE');
+		
+		if (empty($errors)) return true;
+		return $errors;
 	}
 
 	/// determines whether the input string is a chords line
@@ -37,4 +50,27 @@ class Song extends Base {
 	protected function getCollectionName() {
 		return 'songs';
 	}
+	
+	/// define default fields and values for Song objects.
+	/// @return associative array.
+	protected function getDefaults() {
+		return array(
+			'title'=>'', 
+			'author'=>'', 
+			'year'=>'', 
+			'text'=>'',
+		);	
+	}
+	
+	/// @return sanitized array of $this->data;
+	public function toApiObj() {
+		return array(
+			'_id'       => $this->getId(),
+			'title'     => $this->getTitle(),
+			'author'    => $this->getAuthor(),
+			'year'      => $this->getYear(),
+			'text'      => $this->getText(),
+		);
+	}
 }
+?>
