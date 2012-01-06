@@ -1,6 +1,33 @@
 <?php
+// =============================================
+// === START HELPER METHODS FOR API RESPONSES ==
+// =============================================
+function pogginError($code, $status=501) {
+	global $app;
+	if (is_array($code)) {
+		$response=$code;
+	} else {
+		$response=PogginError::getMessage($code);
+	}
+	$app->response()->header('Content-type', 'application/json');
+	$app->halt($status, json_encode($response));
+}
 
-// get song json by id
+function pogginSuccess($data) {
+	global $app;
+	$app->response()->header('Content-type', 'application/json');
+	print json_encode($data);
+}
+// ===========================================
+// === END HELPER METHODS FOR API RESPONSES ==
+// ===========================================
+
+// perform a search function.
+$app->get('/search', function() use ($app) {
+	// TODO: implement this!
+});
+
+// get song json by id.
 $app->get('/api/song/:mongoid', function($mongoid) use ($app) {
 	$song=Song::loadById($mongoid);
 	if (!$song) pogginError('SONG_NOT_FOUND', 404);
