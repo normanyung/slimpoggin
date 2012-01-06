@@ -51,7 +51,7 @@ class Song extends Base {
 	public function isChordLine($line) {
 		// A-G, m(inor), maj, min, dim, aug, sus, #, b, 0-9
 		$line=trim($line);
-		if ($line=='' || preg_match('/[^abcdefgmnujs#i0-9 ]/i', $line)) return false;
+		if ($line=='' || preg_match('/[^abcdefgmnujs#i0-9 \/]/i', $line)) return false;
 		
 		return true;
 	}
