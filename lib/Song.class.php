@@ -24,6 +24,27 @@ class Song extends Base {
 		return $errors;
 	}
 
+	public function commit($validate=true) {
+		$this->updateKeywords();
+		return parent::commit($validate);
+	}
+	
+	/// 
+	protected function updateKeywords() {
+		$lyrics=preg_replace(array('/\s+/', '/[^a-z ]/'), array(' ', ''), strtolower($this->getLyrics()));
+		$words=explode(' ', $lyrics);
+		
+		$stemmed_words=array();
+		foreach ($words as $w) {
+			if (trim($w)=='') continue;
+			$stemmed_words[]=stem($w, STEM_ENGLISH);
+		}
+				
+		// flipping twice to get uniques
+		$words=array_flip($stemmed_words);
+		$this->data['_keywords']=array_values(array_flip($words));
+	}
+	
 	/// determines whether the input string is a chords line
 	/// @param $line string to check
 	/// @return boolean
