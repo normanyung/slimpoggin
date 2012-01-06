@@ -1,9 +1,20 @@
 <footer>
 this is the footer
 </footer>
-<script src="/js/jquery-1.7.1.js"></script>
-<script src="/js/underscore.js"></script>
-<script src="/js/backbone.js"></script>
-<script src="/js/poggin.js"></script>
+<?
+$scripts=array(
+	'/js/jquery-1.7.1.js',
+	'/js/underscore.js',
+	'/js/backbone.js',
+	'/js/poggin.js',
+);
+if (getenv('DEV')) {
+	foreach ($scripts as $path) printf('<script src="%s"></script>', $path);
+} else {
+	// TODO:
+	// maybe section out jquery to use CDN?
+	// combine? minify?
+}
+?>
 </body>
 </html>
